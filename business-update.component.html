@@ -1,0 +1,171 @@
+<div class="modal-header">
+  <h4 class="modal-title">Update Business Information</h4>
+  <button type="button" class="btn-close" aria-label="Close" (click)="onCancel()"></button>
+</div>
+
+<div class="modal-body">
+  <form [formGroup]="businessForm" (ngSubmit)="onSubmit()">
+    <!-- Company Information -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <h6 class="section-title">Company Information</h6>
+      </div>
+      
+      <div class="col-md-6">
+        <div class="mb-3">
+          <label class="form-label">Company Name</label>
+          <input type="text" class="form-control" formControlName="name"
+                 [class.is-invalid]="isFieldInvalid('name')">
+          <div class="invalid-feedback" *ngIf="isFieldInvalid('name')">
+            {{ getErrorMessage('name') }}
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Company Type</label>
+          <input type="text" class="form-control" formControlName="companyType"
+                 [class.is-invalid]="isFieldInvalid('companyType')">
+          <div class="invalid-feedback" *ngIf="isFieldInvalid('companyType')">
+            {{ getErrorMessage('companyType') }}
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Business Type</label>
+          <input type="text" class="form-control" formControlName="businessType"
+                 [class.is-invalid]="isFieldInvalid('businessType')">
+          <div class="invalid-feedback" *ngIf="isFieldInvalid('businessType')">
+            {{ getErrorMessage('businessType') }}
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Category</label>
+          <input type="text" class="form-control" formControlName="category"
+                 [class.is-invalid]="isFieldInvalid('category')">
+          <div class="invalid-feedback" *ngIf="isFieldInvalid('category')">
+            {{ getErrorMessage('category') }}
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="mb-3">
+          <label class="form-label">Phone Number</label>
+          <input type="text" class="form-control" formControlName="phoneNumber"
+                 [class.is-invalid]="isFieldInvalid('phoneNumber')">
+          <div class="invalid-feedback" *ngIf="isFieldInvalid('phoneNumber')">
+            {{ getErrorMessage('phoneNumber') }}
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">License Number</label>
+          <input type="text" class="form-control" formControlName="licenseNumber"
+                 [class.is-invalid]="isFieldInvalid('licenseNumber')">
+          <div class="invalid-feedback" *ngIf="isFieldInvalid('licenseNumber')">
+            {{ getErrorMessage('licenseNumber') }}
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Registration Date</label>
+          <input type="date" class="form-control" formControlName="registrationDate"
+                 [class.is-invalid]="isFieldInvalid('registrationDate')">
+          <div class="invalid-feedback" *ngIf="isFieldInvalid('registrationDate')">
+            {{ getErrorMessage('registrationDate') }}
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label class="form-label">License Issue Date</label>
+              <input type="date" class="form-control" formControlName="licenseIssueDate"
+                     [class.is-invalid]="isFieldInvalid('licenseIssueDate')">
+              <div class="invalid-feedback" *ngIf="isFieldInvalid('licenseIssueDate')">
+                {{ getErrorMessage('licenseIssueDate') }}
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label class="form-label">License Expiry Date</label>
+              <input type="date" class="form-control" formControlName="licenseExpiryDate"
+                     [class.is-invalid]="isFieldInvalid('licenseExpiryDate')">
+              <div class="invalid-feedback" *ngIf="isFieldInvalid('licenseExpiryDate')">
+                {{ getErrorMessage('licenseExpiryDate') }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Address Information -->
+    <div class="row mb-4" formGroupName="address">
+      <div class="col-12">
+        <h6 class="section-title">Address Information</h6>
+      </div>
+      
+      <div class="col-md-6">
+        <div class="mb-3">
+          <label class="form-label">State/Region</label>
+          <select class="form-select" formControlName="state"
+                  [class.is-invalid]="isFieldInvalid('address.state')">
+            <option value="">Select State/Region</option>
+            <option *ngFor="let state of states" [value]="state">{{ state }}</option>
+          </select>
+          <div class="invalid-feedback" *ngIf="isFieldInvalid('address.state')">
+            {{ getErrorMessage('address.state') }}
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Township</label>
+          <select class="form-select" formControlName="township"
+                  [class.is-invalid]="isFieldInvalid('address.township')"
+                  [disabled]="!businessForm.get('address.state')?.value">
+            <option value="">Select Township</option>
+            <option *ngFor="let township of townships" [value]="township">
+              {{ township }}
+            </option>
+          </select>
+          <div class="invalid-feedback" *ngIf="isFieldInvalid('address.township')">
+            {{ getErrorMessage('address.township') }}
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="mb-3">
+          <label class="form-label">City</label>
+          <select class="form-select" formControlName="city"
+                  [class.is-invalid]="isFieldInvalid('address.city')"
+                  [disabled]="!businessForm.get('address.township')?.value">
+            <option value="">Select City</option>
+            <option *ngFor="let city of cities" [value]="city">
+              {{ city }}
+            </option>
+          </select>
+          <div class="invalid-feedback" *ngIf="isFieldInvalid('address.city')">
+            {{ getErrorMessage('address.city') }}
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Additional Address</label>
+          <textarea class="form-control" formControlName="additionalAddress" rows="3"></textarea>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<div class="modal-footer">
+  <button type="button" class="btn btn-secondary" (click)="onCancel()">Cancel</button>
+  <button type="button" class="btn btn-primary" (click)="onSubmit()" [disabled]="loading">
+    <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true" *ngIf="loading"></span>
+    Update Business
+  </button>
+</div>

@@ -1,0 +1,25 @@
+<div class="container">
+    <h2>Create Payment Method</h2>
+    <form (ngSubmit)="createPaymentMethod()">
+      <div class="form-group">
+        <label for="paymentType">Payment Type:</label>
+        <input
+          type="text"
+          id="paymentType"
+          [(ngModel)]="paymentMethod.paymentType"
+          name="paymentType"
+          class="form-control"
+          required
+        />
+      </div>
+      <button type="submit" class="btn btn-primary">Create</button>
+    </form>
+  
+    <!-- Feedback Messages -->
+    <div *ngIf="successMessage" class="alert alert-success mt-3">
+      {{ successMessage }}
+    </div>
+    <div *ngIf="errorMessage" class="alert alert-danger mt-3">
+      {{ errorMessage }}
+    </div>
+  </div>
