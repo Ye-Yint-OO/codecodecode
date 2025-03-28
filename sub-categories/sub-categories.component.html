@@ -1,0 +1,310 @@
+<!-- Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h2 class="mb-0">Sub Categories</h2>
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a routerLink="/dashboard">Dashboard</a></li>
+        <li class="breadcrumb-item active">Sub Categories</li>
+      </ol>
+    </nav>
+  </div>
+  <button class="btn btn-primary d-flex align-items-center" (click)="openAddModal(categoryModal)">
+    <i class="bi bi-plus-lg me-2"></i>Add Sub Category
+  </button>
+</div>
+
+<!-- Loading State -->
+<div *ngIf="loading" class="text-center my-4">
+  <div class="spinner-border text-primary" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>
+
+<!-- Error State -->
+<div *ngIf="error" class="alert alert-danger d-flex align-items-center">
+  <i class="bi bi-exclamation-triangle-fill me-2"></i>
+  {{ error }}
+</div>
+
+<!-- Categories Table Card -->
+<div class="card shadow-sm" *ngIf="!loading && !error">
+  <div class="card-header bg-white py-3">
+    <div class="row align-items-center">
+      <div class="col">
+        <h5 class="mb-0 text-primary">
+          <i class="bi bi-list me-2"></i>All Sub Categories
+        </h5>
+      </div>
+      <div class="col-auto">
+        <div class="input-group">
+          <span class="input-group-text bg-light border-end-0">
+            <i class="bi bi-search text-muted"></i>
+          </span>
+          <input type="text" class="form-control border-start-0 ps-0" placeholder="Search sub categories...">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="bg-light">
+          <tr>
+            <th class="border-0 rounded-start ps-4" style="width: 80px;">ID</th>
+            <th class="border-0">Category Name</th>
+            <th class="border-0">Main Category</th>
+            <th class="border-0">Status</th>
+            <th class="border-0 rounded-end text-end pe-4" style="width: 120px;">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let category of categories">
+            <td class="ps-4">
+              <span class="fw-medium text-secondary">#{{ category.id }}</span>
+            </td>
+            <td>
+              <div class="d-flex align-items-center">
+                <i class="bi bi-folder2 text-primary me-2"></i>
+                <span class="fw-medium">{{ category.category }}</span>
+              </div>
+            </td>
+            <td>
+              <div class="d-flex align-items-center">
+                <i class="bi bi-diagram-2 text-success me-2"></i>
+                <span>{{ category.mainCategory.category }}</span>
+              </div>
+            </td>
+            <td>
+              <span class="badge" [ngClass]="category.status === 'active' ? 'bg-success' : 'bg-danger'">
+                {{ category.status | titlecase }}
+              </span>
+            </td>
+            <td class="text-end pe-4">
+              <div class="dropdown">
+                <button class="btn btn-light btn-sm" type="button" data-bs-toggle="dropdown">
+                  <i class="bi bi-three-dots-vertical"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                  <li>
+                    <a class="dropdown-item" href="javascript:void(0)" (click)="openEditModal(categoryModal, category)">
+                      <i class="bi bi-pencil me-2"></i>Edit
+                    </a>
+                  </li>
+                  <li *ngIf="category.status === 'active'">
+                    <a class="dropdown-item text-danger" href="javascript:void(0)" (click)="openConfirmModal(confirmModal, category, 'delete')">
+                      <i class="bi bi-trash me-2"></i>Delete
+                    </a>
+                  </li>
+                  <li *ngIf="category.status === 'deleted'">
+                    <a class="dropdown-item text-success" href="javascript:void(0)" (click)="openConfirmModal(confirmModal, category, 'activate')">
+                      <i class="bi bi-arrow-clockwise me-2"></i>Activate
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="categories.length === 0" class="text-center py-5">
+      <div class="empty-state">
+        <i class="bi bi-folder2-open display-4 text-muted mb-3"></i>
+        <h5 class="text-muted fw-light">No Sub Categories Found</h5>
+        <p class="text-muted small mb-3">Start by adding a new sub category to the system</p>
+        <button class="btn btn-primary btn-sm" (click)="openAddModal(categoryModal)">
+          <i class="bi bi-plus-lg me-2"></i>Add Sub Category
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pagination Footer -->
+  <div class="card-footer bg-white py-3" *ngIf="categories.length > 0">
+    <div class="row align-items-center">
+      <div class="col">
+        <small class="text-muted">
+          Showing {{ categories.length }} of {{ totalElements }} sub categories
+        </small>
+      </div>
+      <div class="col-auto" *ngIf="totalPages > 1">
+        <nav aria-label="Sub categories pagination">
+          <ul class="pagination pagination-sm mb-0">
+            <li class="page-item" [class.disabled]="currentPage === 0">
+              <a class="page-link" href="javascript:void(0)" 
+                 (click)="onPageChange(currentPage - 1)">
+                <i class="bi bi-chevron-left small"></i>
+              </a>
+            </li>
+            <li class="page-item">
+              <span class="page-link text-muted">
+                Page {{ currentPage + 1 }} of {{ totalPages }}
+              </span>
+            </li>
+            <li class="page-item" [class.disabled]="currentPage >= totalPages - 1">
+              <a class="page-link" href="javascript:void(0)" 
+                 (click)="onPageChange(currentPage + 1)">
+                <i class="bi bi-chevron-right small"></i>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Category Modal (Add/Edit) -->
+<ng-template #categoryModal let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">
+      <i class="bi" [ngClass]="editingCategory ? 'bi-pencil-square' : 'bi-folder-plus'"></i>
+      <span class="ms-2">{{ editingCategory ? 'Edit' : 'Add' }} Sub Category</span>
+    </h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+  </div>
+  <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()">
+    <div class="modal-body">
+      <div class="mb-3">
+        <label for="mainCategory" class="form-label">Main Category</label>
+        <select
+          class="form-select"
+          id="mainCategory"
+          formControlName="mainCategoryId"
+          [class.is-invalid]="mainCategoryField?.invalid && (mainCategoryField?.dirty || mainCategoryField?.touched)"
+        >
+          <option value="">Select a main category</option>
+          <option *ngFor="let mainCategory of mainCategories" [value]="mainCategory.id">
+            {{ mainCategory.category }}
+          </option>
+        </select>
+        <div class="invalid-feedback" *ngIf="mainCategoryField?.errors?.['required'] && (mainCategoryField?.dirty || mainCategoryField?.touched)">
+          Please select a main category
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="category" class="form-label">Sub Category Name</label>
+        <input
+          type="text"
+          class="form-control"
+          id="category"
+          formControlName="category"
+          [class.is-invalid]="categoryField?.invalid && (categoryField?.dirty || categoryField?.touched)"
+          placeholder="Enter sub category name"
+        >
+        <div class="invalid-feedback" *ngIf="categoryField?.errors?.['required'] && (categoryField?.dirty || categoryField?.touched)">
+          Sub category name is required
+        </div>
+        <div class="invalid-feedback" *ngIf="categoryField?.errors?.['maxlength'] && (categoryField?.dirty || categoryField?.touched)">
+          Sub category name cannot exceed 50 characters
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss()">Cancel</button>
+      <button 
+        type="submit" 
+        class="btn btn-primary d-flex align-items-center" 
+        [disabled]="categoryForm.invalid || isSubmitting">
+        <span class="spinner-border spinner-border-sm me-2" *ngIf="isSubmitting"></span>
+        <span>{{ isSubmitting ? (editingCategory ? 'Updating...' : 'Adding...') : (editingCategory ? 'Update' : 'Add') }} Sub Category</span>
+      </button>
+    </div>
+  </form>
+</ng-template>
+
+<!-- Confirmation Modal -->
+<ng-template #confirmModal let-modal>
+  <div class="modal-header bg-light">
+    <h5 class="modal-title">
+      <i class="bi" [ngClass]="confirmAction === 'delete' ? 'bi-trash text-danger' : 'bi-arrow-clockwise text-success'"></i>
+      <span class="ms-2">{{ confirmAction === 'delete' ? 'Delete' : 'Activate' }} Sub Category</span>
+    </h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+  </div>
+  <div class="modal-body text-center">
+    <p class="mb-3">
+      Are you sure you want to {{ confirmAction }} the subcategory "<strong>{{ confirmCategory?.category }}</strong>"?
+    </p>
+    <p class="text-muted small">
+      {{ confirmAction === 'delete' ? 'This will mark it as deleted without removing it permanently.' : 'This will restore it to active status.' }}
+    </p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss()">Cancel</button>
+    <button 
+      type="button" 
+      class="btn d-flex align-items-center" 
+      [ngClass]="confirmAction === 'delete' ? 'btn-danger' : 'btn-success'"
+      (click)="confirmToggleStatus(); modal.dismiss()"
+    >
+      <i class="bi me-2" [ngClass]="confirmAction === 'delete' ? 'bi-trash' : 'bi-check-circle'"></i>
+      {{ confirmAction === 'delete' ? 'Delete' : 'Activate' }}
+    </button>
+  </div>
+</ng-template>
+
+<style>
+.card {
+  border: none;
+  border-radius: 0.75rem;
+}
+
+.table th {
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+}
+
+.table td {
+  vertical-align: middle;
+}
+
+.empty-state {
+  padding: 2rem;
+}
+
+.btn-group .btn {
+  padding: 0.25rem 0.5rem;
+}
+
+.btn-group .btn i {
+  font-size: 0.875rem;
+}
+
+.pagination .page-link {
+  padding: 0.375rem 0.75rem;
+}
+
+.input-group-text,
+.form-control {
+  padding: 0.5rem 0.75rem;
+}
+
+.card-header {
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.card-footer {
+  border-top: 1px solid rgba(0,0,0,0.05);
+}
+
+.modal-header {
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.modal-footer {
+  border-top: 1px solid rgba(0,0,0,0.05);
+}
+
+.form-label {
+  font-weight: 500;
+  color: #6c757d;
+}
+</style>
